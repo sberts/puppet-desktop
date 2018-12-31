@@ -1,0 +1,15 @@
+" set font
+set gfn=Liberation\ Mono\ for\ Powerline\ 11
+
+" remove widgets
+set guioptions-=m  "remove menu bar
+set guioptions-=T  "remove toolbar
+set guioptions-=r  "remove right-hand scroll bar
+set guioptions-=L  "remove left-hand scroll bar
+
+" ident guides
+let g:indent_guides_enable_on_vim_startup = 1
+IndentGuidesEnable
+
+" line numbers
+set number

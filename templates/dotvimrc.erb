@@ -1,0 +1,32 @@
+execute pathogen#infect()
+
+filetype plugin indent on
+
+" powerline
+<%= @vimpython -%> from powerline.vim import setup as powerline_setup
+<%= @vimpython -%> powerline_setup()
+<%= @vimpython -%> del powerline_setup
+
+set laststatus=2 
+
+if !exists("g:syntax_on")
+        syntax enable
+endif
+
+" solarized
+set background=dark
+let g:solarized_termcolors=256
+set t_Co=16
+colorscheme solarized
+
+" puppet
+set tabstop=2
+set nocompatible
+set expandtab
+
+" syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+

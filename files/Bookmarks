@@ -1,0 +1,31 @@
+{
+    "checksum": "4229b1579ce5f678e3a38c905c705e47", 
+    "version": 1, 
+    "roots": {
+        "synced": {
+            "name": "Mobile bookmarks", 
+            "date_modified": "0", 
+            "children": [], 
+            "date_added": "13167107405459448", 
+            "type": "folder", 
+            "id": "3"
+        }, 
+        "bookmark_bar": {
+            "name": "Bookmarks bar", 
+            "date_modified": "13167107510166544", 
+            "children": [
+            ], 
+            "date_added": "13167107405459442", 
+            "type": "folder", 
+            "id": "1"
+        }, 
+        "other": {
+            "name": "Other bookmarks", 
+            "date_modified": "0", 
+            "children": [], 
+            "date_added": "13167107405459447", 
+            "type": "folder", 
+            "id": "2"
+        }
+    }
+}
