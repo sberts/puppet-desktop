@@ -10,6 +10,20 @@ class desktop::awscli(
       provider =>  pip,
     }
 
+    if $operatingsystem == 'CentOS' {
+      package { 'aws-sam-cli':
+        ensure   => present,
+        provider => pip,
+      }
+    } else {
+      package { 'python-backports.ssl-match-hostname':
+        ensure   => present,
+      }
+      ->package { 'aws-sam-cli':
+        ensure   => present,
+        provider => pip,
+      }
+    }
     vcsrepo { "/home/${user}/.aws-env":
       ensure   => present,
       provider => git,

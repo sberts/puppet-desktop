@@ -16,6 +16,7 @@ class desktop(
   Boolean $install_chrome    = true,
   Boolean $install_xrdp      = true,
   Boolean $install_mplayer   = true,
+  Boolean $install_passwordsafe = true,
   Boolean $custom_lilyterm   = true,
   Integer $display_width     = 1920,
   Array $chrome_bookmarks    = [],
@@ -177,6 +178,9 @@ class desktop(
         unless  => 'grep docker /etc/apt/sources.list',
         notify  => Exec['docker-apt-key-add'],
       }
+      user { $user:
+        groups =>  [ 'sudo', 'docker' ],
+      }
     }
 
     package { 'docker-ce':
@@ -256,14 +260,13 @@ class desktop(
       'dejavu-serif-fonts',
       'i3',
       'i3status',
-      'lilyterm',
       'feh',
       'vim-X11',
       'xsel' ]:
         ensure => installed,
       }
     } else {
-      package { [ 'i3', 'lilyterm' ]:
+      package { [ 'i3', 'lightdm', 'feh', 'terminator' ]:
         ensure => installed,
       }
     }
@@ -311,38 +314,13 @@ class desktop(
         refreshonly => true,
         require     => Package['lightdm'],
       }
-
-      # install pwsafe
-      file { 'passwordsafe-src-rpm':
-        ensure => file,
-        path   => '/usr/local/src/passwordsafe-0.97BETA-3.src.rpm',
-        source => 'puppet:///modules/desktop/passwordsafe-0.97BETA-3.src.rpm',
-      }
-      ->package { [ 'rpm-build',
-      'wxGTK3',
-      'wxGTK3-devel',
-      'xerces-c',
-      'xerces-c-devel',
-      'libyubikey',
-      'libyubikey-devel',
-      'ykpers',
-      'ykpers-devel',
-      'libXt-devel',
-      'libXtst-devel',
-      'libuuid-devel' ]:
-        ensure => present,
-      }
-      ->exec { 'rpmbuild':
-        command => 'rpmbuild --rebuild /usr/local/src/passwordsafe-0.97BETA-3.src.rpm',
-        path    => '/usr/bin',
-        creates => '/rpmbuild/RPMS/x86_64/passwordsafe-0.97BETA-3.x86_64.rpm',
-      }
-      ->package { 'passwordsafe':
-        ensure   => present,
-        provider => rpm,
-        source   => '/rpmbuild/RPMS/x86_64/passwordsafe-0.97BETA-3.x86_64.rpm',
-      }
     }
+  }
+
+  # passwordsafe
+  class { 'desktop::passwordsafe':
+    user            => $user,
+    install_passwordsafe => $install_passwordsafe,
   }
 
   # mplayer

@@ -5,6 +5,16 @@ class desktop::lilyterm(
   Integer $display_width   = 1920,
   Boolean $custom_lilyterm = true,
 ) {
+  if $operatingsystem == "CentOS" {
+    package { 'lilyterm':
+      ensure => present,
+    }
+  } else {
+    package { [ 'libvte-dev', 'intltool' ]:
+      ensure => present,
+    }
+  }
+
   if $custom_lilyterm {
     file { "/home/${user}/.config/lilyterm":
       ensure => directory,
@@ -61,7 +71,7 @@ class desktop::lilyterm(
     ~>exec { 'untar-wallpaper':
       command     => 'tar -zxf .wallpaper.tar.gz',
       cwd         => "/home/${user}",
-      path        => '/usr/bin',
+      path        => '/bin:/usr/bin',
       refreshonly => true,
     }
     ~>exec { 'resize-wallpaper':
