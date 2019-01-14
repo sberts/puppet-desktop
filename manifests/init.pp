@@ -143,7 +143,7 @@ class desktop(
     }
     ~> exec { 'untar-go':
       command     => 'tar -C /usr/local -xzf /usr/local/src/go1.11.linux-amd64.tar.gz',
-      path        => '/usr/bin',
+      path        => '/bin:/usr/bin',
       refreshonly =>  true,
     }
 
