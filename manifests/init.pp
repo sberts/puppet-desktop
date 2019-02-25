@@ -267,26 +267,23 @@ class desktop(
         gpgkey  => 'https://copr-be.cloud.fedoraproject.org/results/admiralnemo/i3wm-el7/pubkey.gpg',
       }
       ->package { [ 'nautilus',
-      'thunderbird',
-      'terminator',
-      'keepassx',
-      'evince',
-      'lightdm',
       'liberation-mono-fonts',
       'dejavu-sans-fonts',
       'dejavu-sans-mono-fonts',
       'dejavu-serif-fonts',
       'i3',
       'i3status',
-      'feh',
-      'vim-X11',
-      'xsel' ]:
+      'vim-X11']:
         ensure => installed,
       }
     } else {
-      package { [ 'i3', 'xfce4', 'lightdm', 'feh', 'terminator' ]:
+      package { [ 'i3', 'xfce4' ]:
         ensure => installed,
       }
+    }
+
+    package { [ 'evince', 'terminator', 'feh', 'xsel', 'thunderbird', 'lightdm' ]:
+      ensure => installed
     }
 
     file { "/home/${user}/.config/i3":
