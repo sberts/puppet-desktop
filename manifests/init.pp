@@ -23,12 +23,17 @@ class desktop(
 ) {
   include desktop::base
 
-  package { 'tmux':
+  file { "/home/${user}/bin":
+    ensure => directory,
+    owner  => $user,
+    group  => $user,
+  }
+  package { ['tmux', 'jq', 'jmtpfs']:
     ensure => installed,
   }
   file { "/home/${user}/.bashrc":
     ensure => file,
-    owner => $user,
+    owner  => $user,
   }
   file_line { 'export-term-tmux':
     path =>  "/home/${user}/.bashrc",
@@ -46,8 +51,8 @@ class desktop(
       ensure => installed,
     }
     ->package { 'python3-powerline-status':
-      name     => 'powerline-status',
       ensure   => installed,
+      name     => 'powerline-status',
       provider => pip3,
     }
   }
@@ -73,13 +78,13 @@ class desktop(
   ->file_line { 'tmuxconf-powerline':
     path  => "/home/${user}/.tmux.conf",
     line  => "source \"${powerlinepath}/bindings/tmux/powerline.conf\"",
-    match => "powerline.conf",
+    match => 'powerline.conf',
   }
 
   file_line { 'root-bashrc-powerline':
     path  => '/root/.bashrc',
     line  => ". ${powerlinepath}/bindings/bash/powerline.sh",
-    match => "powerline.sh",
+    match => 'powerline.sh',
   }
 
   file_line { 'bashrc-powerline':
@@ -122,6 +127,13 @@ class desktop(
     }
   }
 
+  # nodejs
+  if $::operatingsystem == 'Ubuntu' {
+    package { ['nodejs', 'npm']:
+      ensure => installed
+    }
+  }
+
   # java
   if $::operatingsystem == 'CentOS' {
     $javapackage = [ 'java', 'java-devel' ]
@@ -155,7 +167,7 @@ class desktop(
 
   # install docker
   if $install_docker {
-    if $operatingsystem == 'CentOS' {
+    if $::operatingsystem == 'CentOS' {
       exec { 'yum-install-docker-repo':
         command => 'yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo',
         path    => '/usr/bin',
@@ -168,7 +180,7 @@ class desktop(
 
     if $::operatingsystem == 'Ubuntu' {
       exec { 'docker-apt-key-add':
-        command     => 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -',
+        command     => 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -',
         path        => '/usr/bin',
         refreshonly => true,
       }
@@ -176,10 +188,15 @@ class desktop(
         command => 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"',
         path    => [ '/bin', '/usr/bin' ],
         unless  => 'grep docker /etc/apt/sources.list',
-        notify  => Exec['docker-apt-key-add'],
+        require => Exec['docker-apt-key-add'],
       }
       user { $user:
         groups =>  [ 'sudo', 'docker' ],
+      }
+      file_line { 'sudo-nopasswd':
+        match => '^%sudo.*',
+        path  => '/etc/sudoers',
+        line  => '%sudo	ALL=(ALL:ALL) NOPASSWD:ALL'
       }
     }
 
@@ -199,7 +216,7 @@ class desktop(
 
   # install openstack client 
   if $install_openstack {
-    if $operatingsystem == 'CentOS' {
+    if $::operatingsystem == 'CentOS' {
       package { 'python-devel':
         ensure => installed,
       }
@@ -221,7 +238,7 @@ class desktop(
 
   # i3wm
   if $install_i3 {
-    if $operatingsystem == "CentOS" {
+    if $::operatingsystem == 'CentOS' {
       exec { 'yum-groupinstall-x':
         command => 'yum groupinstall -y "X Window System" "Desktop" "Desktop Platform"',
         path    => '/usr/bin',
@@ -243,7 +260,7 @@ class desktop(
       refreshonly => true,
     }
 
-    if $operatingsystem == "CentOS" {
+    if $::operatingsystem == 'CentOS' {
       yumrepo { 'admiralnemo-i3wm-el7':
         ensure  => present,
         baseurl => 'https://copr-be.cloud.fedoraproject.org/results/admiralnemo/i3wm-el7/epel-7-$basearch/',
@@ -252,6 +269,7 @@ class desktop(
       ->package { [ 'nautilus',
       'thunderbird',
       'terminator',
+      'keepassx',
       'evince',
       'lightdm',
       'liberation-mono-fonts',
@@ -266,7 +284,7 @@ class desktop(
         ensure => installed,
       }
     } else {
-      package { [ 'i3', 'lightdm', 'feh', 'terminator' ]:
+      package { [ 'i3', 'xfce4', 'lightdm', 'feh', 'terminator' ]:
         ensure => installed,
       }
     }
@@ -300,7 +318,7 @@ class desktop(
     }
 
     # set system to boot to graphical mode
-    if $operatingsystem == "CentOS" {
+    if $::operatingsystem == 'CentOS' {
       exec { 'systemctl-set-default-graphical':
         command => 'systemctl set-default graphical.target',
         path    => '/usr/bin',
@@ -319,7 +337,7 @@ class desktop(
 
   # passwordsafe
   class { 'desktop::passwordsafe':
-    user            => $user,
+    user                 => $user,
     install_passwordsafe => $install_passwordsafe,
   }
 

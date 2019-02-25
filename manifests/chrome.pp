@@ -6,18 +6,27 @@ class desktop::chrome(
   Array $chrome_bookmarks = [],
 ) {
   if $install_chrome {
-    if $operatingsystem == 'CentOS' {
-    yumrepo { 'google-chrome':
-      ensure  => present,
-      baseurl => 'http://dl.google.com/linux/chrome/rpm/stable/x86_64',
-      gpgkey  => 'https://dl.google.com/linux/linux_signing_key.pub',
-    }
-    ->package { 'google-chrome':
-      ensure => installed,
-    }
+    if $::operatingsystem == 'CentOS' {
+      yumrepo { 'google-chrome':
+        ensure  => present,
+        baseurl => 'http://dl.google.com/linux/chrome/rpm/stable/x86_64',
+        gpgkey  => 'https://dl.google.com/linux/linux_signing_key.pub',
+      }
+      ->package { 'google-chrome':
+        ensure => installed,
+      }
+      $browsername = 'google-chrome-unstable'
     } else {
       package { 'chromium-browser':
         ensure => installed,
+      }
+      $browsername = 'chromium'
+      file { "/home/${user}/bin/google.sh":
+        ensure => file,
+        owner  => $user,
+        group  => $user,
+        source => 'puppet:///modules/desktop/google.sh',
+        mode   => '0755'
       }
     }
     file { '/usr/local/bin/add-bookmarks.py':
@@ -28,12 +37,12 @@ class desktop::chrome(
       source => 'puppet:///modules/desktop/add-bookmarks.py',
     }
 
-    $bookmarksfile = "/home/${user}/.config/google-chrome-unstable/Default/Bookmarks"
+    $bookmarksfile = "/home/${user}/.config/${browsername}/Default/Bookmarks"
     $urlfile = "/home/${user}/.bookmarks-urls"
 
     file { [ "/home/${user}/.config",
-      "/home/${user}/.config/google-chrome-unstable",
-      "/home/${user}/.config/google-chrome-unstable/Default" ]:
+    "/home/${user}/.config/${browsername}",
+    "/home/${user}/.config/${browsername}/Default" ]:
       ensure => directory,
       owner  => $user,
       group  => $user,

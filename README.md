@@ -13,15 +13,18 @@ This module installs the following software:
 * Ansible
 * Fabric
 * Python and pip
+* Node.js
 * Go
 * Java
 * awscli and aws-env
 * Openstack client
 * Docker
 * i3 window manager
+* Xfce window manager
 * lilyterm random bg script
 * xrdp
-* Google Chrome
+* Google Chrome/Chromium
 * FireFox
 * PasswordSafe
+* Keepassx
 * MPlayer and PulseAudio

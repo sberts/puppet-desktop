@@ -13,6 +13,17 @@ class desktop::lilyterm(
     package { [ 'libvte-dev', 'intltool' ]:
       ensure => present,
     }
+    file { "/home/${user}/bin/lterm-install.sh":
+      ensure => file,
+      owner  => $user,
+      group  => $user,
+      mode   => '0755',
+      source => 'puppet:///modules/desktop/lterm-install.sh'
+    }
+    ->exec { 'lterm-install.sh':
+      path        => "/home/${user}/bin",
+      refreshonly => true
+    }
   }
 
   if $custom_lilyterm {
@@ -34,11 +45,6 @@ class desktop::lilyterm(
     }
     package { $imagemagickpackage:
       ensure => installed,
-    }
-    file { "/home/${user}/bin":
-      ensure => directory,
-      owner  => $user,
-      group  => $user,
     }
     file { "/home/${user}/bin/lterm.sh":
       ensure => file,
