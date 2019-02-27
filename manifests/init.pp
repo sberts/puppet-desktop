@@ -12,6 +12,7 @@ class desktop(
   Boolean $install_docker    = true,
   Boolean $install_awscli    = true,
   Boolean $install_openstack = true,
+  Boolean $install_terraform = true,
   Boolean $install_i3        = true,
   Boolean $install_chrome    = true,
   Boolean $install_xrdp      = true,
@@ -220,14 +221,32 @@ class desktop(
       package { 'python-devel':
         ensure => installed,
       }
+      package { [ 'python-novaclient',
+      'python-cinderclient',
+      'python-glanceclient',
+      'python-neutronclient',
+      'python-heatclient' ]:
+        ensure   => installed,
+        provider => pip,
+      }
+    } else {
+      package { 'python-openstackclient':
+        ensure => installed
+      }
     }
-    package { [ 'python-novaclient',
-    'python-cinderclient',
-    'python-glanceclient',
-    'python-neutronclient',
-    'python-heatclient' ]:
-      ensure   => installed,
-      provider => pip,
+  }
+
+  # terraform
+  if $install_terraform {
+    exec { 'curl-terraform':
+      command => 'curl -LSso /usr/local/src/terraform_0.11.11_linux_amd64.zip https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip',
+      path    => '/usr/bin',
+      creates =>  '/usr/local/src/terraform_0.11.11_linux_amd64.zip',
+    }
+    ~> exec { 'unzip-terraform':
+      command     => 'unzip /usr/local/src/terraform_0.11.11_linux_amd64.zip -d /usr/local/bin',
+      path        => '/bin:/usr/bin',
+      refreshonly =>  true,
     }
   }
 
