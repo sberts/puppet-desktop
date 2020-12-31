@@ -1,3 +1,5 @@
 export AWS_CREDENTIAL_FILE=~/.aws/credentials
 export AWS_PROFILE=default
 . ~/.aws-env/aws-env
+unset AWS_SECRET_ACCESS_KEY
+unset AWS_ACCESS_KEY_ID

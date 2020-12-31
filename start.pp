@@ -1,3 +1,3 @@
 class { '::desktop':
-  user => 'sberts',
+  user => 'ubuntu',
 }

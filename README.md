@@ -1,30 +1,54 @@
 # puppet-desktop
 
-Puppet module for configuring a Linux Desktop  
+Puppet module for configuring a Linux desktop  
 
-Tested with CentOS 7 and Ubuntu 18.04
+Tested with Ubuntu 20.04
 
 This module installs the following software:
 
+Shell Utilities
 * Powerline status bar
-* basic ssh-agent script
+* ssh-agent script
+* tmux
+
+Editors
 * Vim and plugins
 * Atom and plugins
 * Ansible
 * Fabric
+
+Software Development
 * Python and pip
 * Node.js
 * Go
 * Java
-* awscli and aws-env
+
+DevOps Tools
+* awscli and aws-env scripts
 * Openstack client
+* Terraform
 * Docker
+
+Desktop Applications
 * i3 window manager
 * Xfce window manager
-* lilyterm random bg script
+* lilyterm random background script
 * xrdp
 * Google Chrome/Chromium
 * FireFox
 * PasswordSafe
 * Keepassx
-* MPlayer and PulseAudio
+* MPlayer
+* PulseAudio
+
+Prereqs
+
+Install Puppet
+
+sudo su -
+apt-get install puppet
+
+puppet module install puppetlabs-stdlib
+puppet module install puppetlabs-vcsrepo
+
+git clone this repo 
